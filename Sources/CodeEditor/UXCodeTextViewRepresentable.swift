@@ -23,67 +23,63 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
    * Configures a CodeEditor View with the given parameters.
    *
    * - Parameters:
-   *   - source:           A binding to a String that holds the source code to be
-   *                       edited (or displayed).
-   *   - language:         Optionally set a language (e.g. `.swift`), otherwise
-   *                       Highlight.js will attempt to detect the language.
-   *   - theme:            The name of the theme to use.
-   *   - fontSize:         On macOS this Binding can be used to persist the size of
-   *                       the font in use. At runtime this is combined with the
-   *                       theme to produce the full font information.
-   *   - flags:            Configure whether the text is editable and/or selectable.
-   *   - indentStyle:      Optionally insert a configurable amount of spaces if the
-   *                       user hits "tab".
-   *   - inset:            The editor can be inset in the scroll view. Defaults to
-   *                       8/8.
-   *   - autoPairs:        A mapping of open/close characters, where the close
-   *                       characters are automatically injected when the user enters
-   *                       the opening character. For example: `[ "<": ">" ]` would
-   *                       automatically insert the closing ">" if the user enters
-   *                       "<".
-   *   - autoscroll:       If enabled, the editor automatically scrolls to the respective
-   *                       region when the `selection` is changed programatically.
-   *   - backgroundColor:  Overrides theme's background color.
+   *   - source:      A binding to a String that holds the source code to be
+   *                  edited (or displayed).
+   *   - language:    Optionally set a language (e.g. `.swift`), otherwise
+   *                  Highlight.js will attempt to detect the language.
+   *   - theme:       The name of the theme to use.
+   *   - fontSize:    On macOS this Binding can be used to persist the size of
+   *                  the font in use. At runtime this is combined with the
+   *                  theme to produce the full font information.
+   *   - flags:       Configure whether the text is editable and/or selectable.
+   *   - indentStyle: Optionally insert a configurable amount of spaces if the
+   *                  user hits "tab".
+   *   - inset:       The editor can be inset in the scroll view. Defaults to
+   *                  8/8.
+   *   - autoPairs:   A mapping of open/close characters, where the close
+   *                  characters are automatically injected when the user enters
+   *                  the opening character. For example: `[ "<": ">" ]` would
+   *                  automatically insert the closing ">" if the user enters
+   *                  "<".
+   *   - autoscroll:  If enabled, the editor automatically scrolls to the respective
+   *                  region when the `selection` is changed programatically.
    */
-  public init(source         : Binding<String>,
-              selection      : Binding<Range<String.Index>>?,
-              language       : CodeEditor.Language?,
-              theme          : CodeEditor.ThemeName,
-              fontSize       : Binding<CGFloat>?,
-              flags          : CodeEditor.Flags,
-              indentStyle    : CodeEditor.IndentStyle,
-              autoPairs      : [ String : String ],
-              inset          : CGSize,
-              allowsUndo     : Bool,
-              autoscroll     : Bool,
-              backgroundColor: NSColor? = nil)
+  public init(source      : Binding<String>,
+              selection   : Binding<Range<String.Index>>?,
+              language    : CodeEditor.Language?,
+              theme       : CodeEditor.ThemeName,
+              fontSize    : Binding<CGFloat>?,
+              flags       : CodeEditor.Flags,
+              indentStyle : CodeEditor.IndentStyle,
+              autoPairs   : [ String : String ],
+              inset       : CGSize,
+              allowsUndo  : Bool,
+              autoscroll  : Bool)
   {
-    self.source                = source
-    self.selection             = selection
-    self.fontSize              = fontSize
-    self.language              = language
-    self.themeName             = theme
-    self.flags                 = flags
-    self.indentStyle           = indentStyle
-    self.autoPairs             = autoPairs
-    self.inset                 = inset
-    self.allowsUndo            = allowsUndo
-    self.autoscroll            = autoscroll
-    self.customBackgroundColor = backgroundColor
+    self.source      = source
+    self.selection   = selection
+    self.fontSize    = fontSize
+    self.language    = language
+    self.themeName   = theme
+    self.flags       = flags
+    self.indentStyle = indentStyle
+    self.autoPairs   = autoPairs
+    self.inset       = inset
+    self.allowsUndo  = allowsUndo
+    self.autoscroll  = autoscroll
   }
     
-  private var source                 : Binding<String>
-  private var selection              : Binding<Range<String.Index>>?
-  private var fontSize               : Binding<CGFloat>?
-  private var customBackgroundColor  : NSColor? = nil
-  private let language               : CodeEditor.Language?
-  private let themeName              : CodeEditor.ThemeName
-  private let flags                  : CodeEditor.Flags
-  private let indentStyle            : CodeEditor.IndentStyle
-  private let inset                  : CGSize
-  private let allowsUndo             : Bool
-  private let autoPairs              : [ String : String ]
-  private let autoscroll             : Bool
+  private var source      : Binding<String>
+  private var selection   : Binding<Range<String.Index>>?
+  private var fontSize    : Binding<CGFloat>?
+  private let language    : CodeEditor.Language?
+  private let themeName   : CodeEditor.ThemeName
+  private let flags       : CodeEditor.Flags
+  private let indentStyle : CodeEditor.IndentStyle
+  private let inset       : CGSize
+  private let allowsUndo  : Bool
+  private let autoPairs   : [ String : String ]
+  private let autoscroll  : Bool
 
   // The inner `value` is true, exactly when execution is inside
   // the `updateTextView(_:)` method. The `Coordinator` can use this
@@ -240,7 +236,6 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
   #if os(macOS)
     public func makeNSView(context: Context) -> NSScrollView {
       let textView = UXCodeTextView()
-      textView.customBackgroundColor = customBackgroundColor
       textView.autoresizingMask   = [ .width, .height ]
       textView.delegate           = context.coordinator
       textView.allowsUndo         = allowsUndo
@@ -262,7 +257,6 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
       if textView.delegate !== context.coordinator {
         textView.delegate = context.coordinator
       }
-      textView.customBackgroundColor = customBackgroundColor
       textView.textContainerInset = inset
       updateTextView(textView)
     }
